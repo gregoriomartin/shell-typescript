@@ -1,3 +1,5 @@
+import { existsSync } from "fs";
+
 export const commandHandlers = {
     exit: (args: string[]) => {
         const code = parseInt(args[0]) || 0;
@@ -23,6 +25,8 @@ export const commandHandlers = {
                         return;
                     }
                 };
+                
+                console.log(`${args[0]}: not found`);
             }
         }
     }
