@@ -5,9 +5,9 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-function ask(question: string): Promise<string> {
+function readCommand(): Promise<string> {
   return new Promise((resolve) => {
-    rl.question(question, (answer) => {
+    rl.question("$ ", (answer) => {
       resolve(answer);
     });
   });
@@ -15,11 +15,9 @@ function ask(question: string): Promise<string> {
 
 async function main() {
   while (true) {
-    const answer = await ask("$ ");
+    const answer = await readCommand();
     console.log(`${answer}: command not found`)
   }
 }
-
-
 
 rl.close();
