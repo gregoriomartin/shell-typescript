@@ -25,6 +25,9 @@ export const commandHandlers = {
                 }
             }
         }
+    },
+    pwd: () => {
+        console.log(process.cwd());
     }
 } as const;
 
