@@ -28,6 +28,10 @@ export const commandHandlers = {
     },
     pwd: () => {
         console.log(process.cwd());
+    },
+    cd: (args: string[]) => {
+        if (existsSync(args[0])) process.chdir(args[0]);
+        else console.log(`cd: ${args[0]}: No such file or directory`);
     }
 } as const;
 
