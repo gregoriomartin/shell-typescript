@@ -18,7 +18,7 @@ async function main() {
     const answer = await readCommand();
     console.log(`${answer}: command not found`)
   }
+  rl.close();
 }
 
 main();
-rl.close();
