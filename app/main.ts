@@ -1,5 +1,6 @@
 import { createInterface } from "readline";
-import { Command, commandHandlers } from "./commands";
+import { type Command, commandHandlers, resolveExecutable } from "./commands";
+import exec from "child_process";
 
 const rl = createInterface({
   input: process.stdin,
@@ -19,6 +20,9 @@ async function main() {
 
     if (cmd in commandHandlers) {
       commandHandlers[cmd as Command](args);
+    }
+    else if (resolveExecutable(cmd)) {
+      exec.execSync(command, { stdio: "inherit" });
     }
     else {
       console.log(`${command}: command not found`);
