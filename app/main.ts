@@ -7,18 +7,25 @@ const rl = createInterface({
 
 function readCommand(): Promise<string> {
   return new Promise((resolve) => {
-    rl.question("$ ", (answer) => {
-      resolve(answer);
-    });
+    rl.question("$ ", resolve);
   });
 }
 
 async function main() {
   while (true) {
-    const answer = await readCommand();
-    console.log(`${answer}: command not found`)
+    const command = await readCommand();
+    const [cmd, arg] = command.trim().split(" ");
+
+    switch (cmd) {
+      case 'exit':
+        const code = parseInt(arg);
+        rl.close();
+        process.exit(code);
+        return;
+      default:
+        console.log(`${command}: command not found`);
+    }
   }
-  rl.close();
 }
 
 main();
