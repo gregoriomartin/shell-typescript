@@ -1,5 +1,5 @@
 import { createInterface } from "readline";
-import { Command, commandHandlers } from "./commands"
+import { Command, commandHandlers } from "./commands";
 
 const rl = createInterface({
   input: process.stdin,

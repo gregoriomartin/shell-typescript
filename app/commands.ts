@@ -15,7 +15,14 @@ export const commandHandlers = {
             if (isValidCommand(args[0])) {
                 console.log(`${args[0]} is a shell builtin`);
             } else {
-                console.log(`${args[0]}: not found`);
+                const paths = process.env["PATH"]?.split(":") || [];
+                for (const path of paths) {
+                    const fullPath = `${path}/${args[0]}`;
+                    if (existsSync(fullPath)) {
+                        console.log(`${args[0]} is ${fullPath}`);
+                        return;
+                    }
+                };
             }
         }
     }
