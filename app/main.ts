@@ -1,4 +1,5 @@
 import { createInterface } from "readline";
+import { Command, commandHandlers } from "./commands"
 
 const rl = createInterface({
   input: process.stdin,
@@ -16,25 +17,13 @@ async function main() {
     const command = await readCommand();
     const [cmd, ...args] = command.trim().split(/\s+/);
 
-    switch (cmd) {
-      case 'exit':
-        const code = parseInt(args[0]);
-        rl.close();
-        process.exit(code);
-        return;
-
-      case 'echo':
-        if (args) {
-          console.log(args.join(" "));
-        } else {
-          console.log("No argument provided for echo");
-        }
-        break;
-
-      default:
-        console.log(`${command}: command not found`);
-        break;
+    if (cmd in commandHandlers) {
+      commandHandlers[cmd as Command](args);
     }
+    else {
+      console.log(`${command}: command not found`);
+    }
+
   }
 }
 
