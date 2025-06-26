@@ -13,10 +13,67 @@ function readCommand(): Promise<string> {
   });
 }
 
+function parseCommand(input: string): string[] {
+  const args: string[] = [];
+  let current = "";
+  let i = 0;
+  let inSingleQuote = false;
+  let inDoubleQuote = false;
+
+  while (i < input.length) {
+    const char = input[i];
+
+    if (inSingleQuote) {
+      if (char === "'") {
+        inSingleQuote = false;
+      } else {
+        current += char;
+      }
+      i++;
+    } else if (inDoubleQuote) {
+      if (char === '"') {
+        inDoubleQuote = false;
+      } else {
+        current += char;
+      }
+      i++;
+    } else {
+      if (char === "'") {
+        inSingleQuote = true;
+        i++;
+      } else if (char === '"') {
+        inDoubleQuote = true;
+        i++;
+      } else if (/\s/.test(char)) {
+        if (current.length > 0 || args.length === 0) {
+          args.push(current);
+          current = "";
+        }
+        while (i < input.length && /\s/.test(input[i])) i++; // Skip spaces
+      } else {
+        current += char;
+        i++;
+      }
+    }
+  }
+
+  if (inSingleQuote || inDoubleQuote) {
+    throw new Error("Unmatched quote in command");
+  }
+
+  if (current.length > 0 || input.endsWith("''")) {
+    args.push(current);
+  }
+
+  return args;
+}
+
+
+
 async function main() {
   while (true) {
     const command = await readCommand();
-    const [cmd, ...args] = command.trim().split(/\s+/);
+    const [cmd, ...args] = parseCommand(command);
 
     if (cmd in commandHandlers) {
       commandHandlers[cmd as Command](args);
