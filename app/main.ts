@@ -33,10 +33,14 @@ function parseCommand(input: string): string[] {
     } else if (inDoubleQuote) {
       if (char === '"') {
         inDoubleQuote = false;
+      } else if (char === '\\' && i + 1 < input.length) {
+        const nextChar = input[i + 1];
+        current += nextChar;
+        i += 2;
       } else {
         current += char;
+        i++;
       }
-      i++;
     } else {
       if (char === "'") {
         inSingleQuote = true;
@@ -44,12 +48,16 @@ function parseCommand(input: string): string[] {
       } else if (char === '"') {
         inDoubleQuote = true;
         i++;
+      } else if (char === '\\' && i + 1 < input.length) {
+        const nextChar = input[i + 1];
+        current += nextChar;
+        i += 2;
       } else if (/\s/.test(char)) {
-        if (current.length > 0 || args.length === 0) {
+        if (current.length > 0 || input[i - 1] === '"' || input[i - 1] === "'") {
           args.push(current);
           current = "";
         }
-        while (i < input.length && /\s/.test(input[i])) i++; // Skip spaces
+        while (i < input.length && /\s/.test(input[i])) i++; // Skip whitespace
       } else {
         current += char;
         i++;
@@ -61,7 +69,7 @@ function parseCommand(input: string): string[] {
     throw new Error("Unmatched quote in command");
   }
 
-  if (current.length > 0 || input.endsWith("''")) {
+  if (current.length > 0 || input.endsWith("''") || input.endsWith('""')) {
     args.push(current);
   }
 
